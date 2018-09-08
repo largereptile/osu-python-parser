@@ -4,7 +4,7 @@ class DotDict(dict):
     __delattr__ = dict.__delitem__
 
 modes = {0: 'osu!Standard', 1: 'Taiko', 2: 'Catch The Beat', 3: 'osu!Mania', -1: 'no mode'}
-
+# TODO add some kind of enums, do these for type etc. too
 
 
 class Map():
