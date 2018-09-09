@@ -36,7 +36,7 @@ mod = height/384
 
 buttons = {0: 'white', 1: 'grey', 2: 'yellow', 5: 'blue', 10: 'purple', 15: 'green', 16: 'black'}
 
-font = ImageFont.truetype("/Users/Harry/Downloads/android_packages_themes_Template-cm-12.0/theme/src/main/assets/fonts/Roboto-Bold.ttf", 20)
+font = ImageFont.truetype("path/to/font", 20)
 
 currently_showing = []
 
