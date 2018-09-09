@@ -4,7 +4,7 @@ class DotDict(dict):
     __delattr__ = dict.__delitem__
 
 modes = {0: 'osu!Standard', 1: 'Taiko', 2: 'Catch The Beat', 3: 'osu!Mania', -1: 'no mode'}
-# TODO add some kind of enums, do these for type etc. too
+
 
 
 class Map():
@@ -100,7 +100,7 @@ class Map():
             if data[0]:
                 temp[data[0]] = data[1].lstrip()
         self.difficulty = DotDict()
-        self.difficulty.hp_drain_rate = int(temp.get('HPDrainRate', 0))
+        self.difficulty.hp_drain_rate = float(temp.get('HPDrainRate', 0))
         self.difficulty.circle_size = float(temp.get('CircleSize', 0.0))
         self.difficulty.overall_difficulty = float(temp.get('OverallDifficulty', 0.0))
         self.difficulty.approach_rate = float(temp.get('ApproachRate', 0.0))
@@ -144,26 +144,40 @@ class Map():
             self.hitobjects[offset] = DotDict()
             self.hitobjects[offset].x = int(cats[0])
             self.hitobjects[offset].y = int(cats[1])
+            self.hitobjects[offset].time = offset
             self.hitobjects[offset].type = int(cats[3])
             self.hitobjects[offset].hitsound = int(cats[4])
             if int(cats[3]) == 2 or int(cats[3]) == 6:
                 cats2 = cats[5].split(",")
                 path = cats2[0].split("|")
                 self.hitobjects[offset].slider_type = path[0]
-                self.hitobjects[offset].curve_points = DotDict()
+                self.hitobjects[offset].curve_points = []
                 count = 0
+                self.hitobjects[offset].curve_points.append([])
                 for point in path[1:]:
                     points = point.split(":")
-                    self.hitobjects[offset].curve_points[count] = points
-                    count += 1
+                    try:
+                        if points == self.hitobjects[offset].curve_points[count][-1]:
+                            count += 1
+                            self.hitobjects[offset].curve_points.append([])
+                            self.hitobjects[offset].curve_points[count].append(points)
+                        else:
+                            self.hitobjects[offset].curve_points[count].append(points)
+                    except IndexError:
+                        self.hitobjects[offset].curve_points[count].append(points)
                 self.hitobjects[offset].repeat = int(cats2[1])
                 self.hitobjects[offset].pixel_length = float(cats2[2])
-                self.hitobjects[offset].edge_hitsounds = cats2[3].split("|")
-                self.hitobjects[offset].edge_additions = cats2[4].split("|")
-                self.hitobjects[offset].extras = cats2[5]
+                try:
+                    self.hitobjects[offset].edge_hitsounds = cats2[3].split("|")
+                    self.hitobjects[offset].edge_additions = cats2[4].split("|")
+                    self.hitobjects[offset].extras = cats2[5]
+                except IndexError:
+                    self.hitobjects[offset].extras = "none"
             elif int(cats[3]) == 8 or int(cats[3]) == 12:
                 cats2 = cats[5].split(",")
                 self.hitobjects[offset].end_time = cats2[0]
                 self.hitobjects[offset].extras = cats2[1]
             else:
                 self.hitobjects[offset].extras = cats[5]
+
+
